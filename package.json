@@ -1,0 +1,14 @@
+{
+  "name": "actor-movies",
+  "version": "1.0.0",
+  "description": "A code challenge",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "author": "Visitha Wijesinghe",
+  "license": "ISC",
+  "dependencies": {
+    "@hapi/hapi": "^20.2.2"
+  }
+}
