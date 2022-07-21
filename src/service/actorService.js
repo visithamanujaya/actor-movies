@@ -24,14 +24,32 @@ const listActors = async (limit, offset) => {
     }
 }
 
-const listActorMovies = async (actorId) => {
-    const sql = `select m.name, m.release_date from
-    actor a join actor_movie_map amm on a.id = amm.actor_id
-    join movie m on m.id = amm.movie_id where a.id = $1`;
-    const values = [actorId];
+const getActorCount = async () => {
+    const sql = "select count(*) as actor_count from actor";
+    const values = [];
     try {
         const res = await executeSelect(sql, values);
         return res;
+    } catch (err) {
+        console.log(`Error executing listActors ${err.message}`);
+        throw err;
+    }
+}
+
+const listActorMovies = async (actorId) => {
+    const sql = `select m.name, m.release_date from
+    actor a join actor_movie_map amm on a.id = amm.actor_id
+    join movie m on m.id = amm.movie_id where a.id = $1 order by m.release_date DESC limit 3`;
+    const values = [actorId];
+    try {
+        const res = await executeSelect(sql, values);
+        const temp = res.map(movie => {
+            return {
+                actorId: parseInt(actorId),
+                ...movie
+            }
+        })
+        return temp;
     } catch (err) {
         console.log(`Error executing listActorMovies ${err.message}`);
         throw err;
@@ -81,5 +99,6 @@ module.exports = {
     listActorMovies,
     addActor,
     addMovie,
-    addActorMovieMap
+    addActorMovieMap,
+    getActorCount
 }

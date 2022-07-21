@@ -5,10 +5,19 @@ const getActorById = (request) => {
     return actorService.getActorById(actorId);
 }
 
-const listActors = (request) => {
-    const limit = request.query.limit || 10;
-    const offset = request.query.offset || 0;
-    return actorService.listActors(limit, offset);
+const listActors = async (request) => {
+    try {
+        const limit = request.query.limit || 10;
+        const offset = request.query.offset || 0;
+        const actors = await actorService.listActors(limit, offset);
+        const actorCount = await actorService.getActorCount();
+        return {
+            actors,
+            actorCount: parseInt(actorCount[0]['actor_count'])
+        }
+    } catch (err) {
+        throw err;
+    }
 }
 
 const listMoviesByActorId = (request) => {

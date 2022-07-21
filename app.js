@@ -7,7 +7,7 @@ require('dotenv').config();
 
 const init = async () => {
 
-    const port = process.env.port || 3000;
+    const port = process.env.port || 3001;
     const server = Hapi.server({
         port,
         host: '0.0.0.0',
