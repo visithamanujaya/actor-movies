@@ -9,6 +9,7 @@
   "author": "Visitha Wijesinghe",
   "license": "ISC",
   "dependencies": {
-    "@hapi/hapi": "^20.2.2"
+    "@hapi/hapi": "^20.2.2",
+    "sqlite3": "^5.0.9"
   }
 }

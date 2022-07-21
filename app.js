@@ -1,25 +1,58 @@
 'use strict';
 
 const Hapi = require('@hapi/hapi');
+const {addActor, listActors} = require("./src/service/actorService");
+const { createDatabase } = require('./src/db/init');
+const actorWorkflow = require('./src/workflow/actorWorkflow')
 
 const init = async () => {
 
     const port = process.env.port || 3000;
     const server = Hapi.server({
         port,
-        host: '0.0.0.0'
+        host: '0.0.0.0',
+        routes: {
+            "cors": true
+        }
     });
 
     server.route({
         method: 'GET',
-        path: '/',
+        path: '/actors',
         handler: (request, h) => {
-
-            return 'Hello World!';
+            return actorWorkflow.listActors(request);
+        }
+    });
+    server.route({
+        method: 'POST',
+        path: '/actors',
+        handler: (request, h) => {
+            return actorWorkflow.createActor(request);
+        }
+    });
+    server.route({
+        method: 'GET',
+        path: '/actors/{id}',
+        handler: (request, h) => {
+            return actorWorkflow.getActorById(request);
+        }
+    });
+    server.route({
+        method: 'GET',
+        path: '/actors/{id}/movies',
+        handler: (request, h) => {
+            return actorWorkflow.listMoviesByActorId(request);
+        }
+    });
+    server.route({
+        method: 'POST',
+        path: '/actors/{id}/movies',
+        handler: (request, h) => {
+            return actorWorkflow.addMovie(request);
         }
     });
 
-
+    createDatabase()
     await server.start();
     console.log('Server running on %s', server.info.uri);
 };
