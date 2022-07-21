@@ -26,8 +26,8 @@ const addMovie = async (request) => {
     const {name, releaseDate} = request.payload;
     try {
         const movieId = await actorService.addMovie({name, releaseDate});
-        const res = await actorService.addActorMovieMap({actorId, movieId});
-        return res;
+        await actorService.addActorMovieMap({actorId, movieId});
+        return movieId;
     } catch (err) {
         console.log("Error in adding a movie - ", err.message);
         throw err;

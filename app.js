@@ -1,9 +1,9 @@
 'use strict';
 
 const Hapi = require('@hapi/hapi');
-const {addActor, listActors} = require("./src/service/actorService");
-const { createDatabase } = require('./src/db/init');
-const actorWorkflow = require('./src/workflow/actorWorkflow')
+const actorWorkflow = require('./src/workflow/actorWorkflow');
+require('dotenv').config();
+
 
 const init = async () => {
 
@@ -52,7 +52,6 @@ const init = async () => {
         }
     });
 
-    createDatabase()
     await server.start();
     console.log('Server running on %s', server.info.uri);
 };

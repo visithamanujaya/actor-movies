@@ -1,49 +1,51 @@
-const sqlite3 = require('sqlite3').verbose();
+const { Client } = require('pg')
 
 let dbClient;
 
-const getClient = () => {
+const getClient = async () => {
     if(dbClient){
         return dbClient;
     } else {
-        dbClient = new sqlite3.Database('./actor.db', sqlite3.OPEN_READWRITE, (err) => {
-            if (err) {
-                console.log("Getting error " + err);
-                return;
-            }
-        });
+        dbClient = new Client({
+            user: process.env.DB_USER,
+            host: process.env.DB_HOST,
+            database: process.env.DB_NAME,
+            password: process.env.DB_PASSWORD,
+            port: 5432,
+        })
+        await dbClient.connect();
         return dbClient;
     }
 }
 
-exports.run = (query, params) => {
-    return new Promise((resolve, reject) => {
-        const db = getClient();
-        db.run(query, params,
-            (err) => {
-                if(err) {
-                    console.log(`Error executing run query - ${query} with values - ${params}`);
-                    reject(err.message)
-                } else    {
-                    resolve(true)
-                }
-            })
-    })
+const executeQuery = async (query, params) => {
+        if(params == undefined) {
+            params = [];
+        }
+        try {
+            const client = await getClient();
+            const result = await client.query(query, params);
+            return result;
+        } catch (err) {
+            console.log(`Execution of the query ${query} with ${params} failed - ${err.message}`);
+            throw err;
+        }
 }
 
-exports.all = (query, params) => {
-    return new Promise((resolve, reject) => {
-        if(params == undefined) {
-            params=[];
-        }
-        const db = getClient();
-        db.all(query, params, (err, rows) => {
-            if(err) {
-                console.log(`Error executing all query - ${query} with values - ${params}`);
-                reject("Read error: " + err.message)
-            } else {
-                resolve(rows)
-            }
-        })
-    })
+exports.executeSelect = async (query, params) => {
+    try {
+        const res = await executeQuery(query, params);
+        return res['rows'];
+    } catch (err){
+        throw err;
+    }
+}
+
+exports.executeInsert = async (query, params) => {
+    try {
+        const res = await executeQuery(query, params);
+        return res;
+    } catch (err){
+        throw err;
+    }
 }
