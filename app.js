@@ -18,7 +18,7 @@ const init = async () => {
 
     server.route({
         method: 'GET',
-        path: '/actors',
+        path: '/actors/{limit}/{offset}',
         handler: (request, h) => {
             return actorWorkflow.listActors(request);
         }

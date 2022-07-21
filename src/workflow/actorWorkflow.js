@@ -7,8 +7,8 @@ const getActorById = (request) => {
 
 const listActors = async (request) => {
     try {
-        const limit = request.query.limit || 10;
-        const offset = request.query.offset || 0;
+        const limit = request.params.limit;
+        const offset = request.params.offset;
         const actors = await actorService.listActors(limit, offset);
         const actorCount = await actorService.getActorCount();
         return {
